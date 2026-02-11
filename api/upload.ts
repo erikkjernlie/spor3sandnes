@@ -39,6 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const result = await put("menu/current.pdf", file, {
       access: "public",
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: "application/pdf",
     });
 
@@ -47,6 +48,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     await put("menu/meta.json", JSON.stringify(meta), {
       access: "public",
       addRandomSuffix: false,
+      allowOverwrite: true,
       contentType: "application/json",
     });
 
