@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
-const MENU_URL =
-  "https://cdn.prod.website-files.com/63a2161950ebce0ce95268f9/6985d7bce3b0bcfd13203048_meny2026%20korrektur2.pdf";
+const MENU_URL = "/api/menu";
 const BOOKING_URL = "https://spor-3.resos.com/booking";
 
 const Navigation = () => {
