@@ -17,7 +17,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
         const meta = await metaRes.json();
         // Redirect to the PDF with a cache-busting version param
         const pdfUrl = `${meta.url}?v=${meta.updatedAt}`;
-        res.setHeader("Cache-Control", "public, max-age=86400, s-maxage=86400");
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         return res.redirect(302, pdfUrl);
       }
     }
