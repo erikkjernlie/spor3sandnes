@@ -33,7 +33,7 @@ const Hero = () => {
         <p className="text-lg md:text-xl text-pub-warm/90 max-w-2xl mx-auto mb-10 leading-relaxed text-shadow font-light">
           En lun og folkelig bar i hjertet av Sandnes sentrum. Vi serverer gode
           drinker fra proffe bartendere og mat fra à la carte meny til moderate
-          priser. Utesevering med varmeovner.
+          priser. Uteservering med varmeovner.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
@@ -56,7 +56,6 @@ const Hero = () => {
           </a>
         </div>
       </div>
-
     </section>
   );
 };

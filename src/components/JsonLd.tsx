@@ -4,7 +4,7 @@ const jsonLd = {
   name: "Spor 3 Sandnes",
   alternateName: "Spor 3",
   description:
-    "En lun og folkelig bar i hjertet av Sandnes sentrum. Vi serverer gode drinker fra proffe bartendere og mat fra à la carte meny til moderate priser. Utesevering med varmeovner.",
+    "En lun og folkelig bar i hjertet av Sandnes sentrum. Vi serverer gode drinker fra proffe bartendere og mat fra à la carte meny til moderate priser. Uteservering med varmeovner.",
   url: "https://www.spor3sandnes.no",
   telephone: "+4751536900",
   email: "sanne.jakob@gmail.com",
@@ -94,7 +94,8 @@ const jsonLd = {
     },
   ],
   sameAs: ["https://www.facebook.com/SPOR3Sandnes/"],
-  hasMenu: "https://cdn.prod.website-files.com/63a2161950ebce0ce95268f9/6985d7bce3b0bcfd13203048_meny2026%20korrektur2.pdf",
+  hasMenu:
+    "https://cdn.prod.website-files.com/63a2161950ebce0ce95268f9/6985d7bce3b0bcfd13203048_meny2026%20korrektur2.pdf",
   acceptsReservations: "True",
   potentialAction: {
     "@type": "ReserveAction",
