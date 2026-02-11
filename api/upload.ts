@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { put } from "@vercel/blob";
+import { put, del, list } from "@vercel/blob";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
@@ -7,7 +7,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    // Parse multipart form data from the raw body
     const contentType = req.headers["content-type"] || "";
     if (!contentType.includes("multipart/form-data")) {
       return res.status(400).json({ error: "Expected multipart/form-data" });
@@ -20,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       method: "POST",
       headers: req.headers as any,
       body: req as any,
-      // @ts-ignore - duplex needed for streaming body
+      // @ts-ignore
       duplex: "half",
     });
 
@@ -35,16 +34,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Kun PDF-filer er tillatt" });
     }
 
-    // Upload the PDF
-    const result = await put("menu/current.pdf", file, {
+    // Delete old menu PDFs to avoid accumulating files
+    try {
+      const { blobs } = await list({ prefix: "menu/" });
+      const toDelete = blobs.map((b) => b.url);
+      if (toDelete.length > 0) {
+        await del(toDelete);
+      }
+    } catch {
+      // Ignore cleanup errors
+    }
+
+    // Upload the PDF with a unique name (random suffix = unique URL = no caching issues)
+    const timestamp = Date.now();
+    const result = await put(`menu/meny-${timestamp}.pdf`, file, {
       access: "public",
       addRandomSuffix: false,
-      allowOverwrite: true,
       contentType: "application/pdf",
     });
 
-    // Store metadata with upload timestamp for cache busting
-    const meta = { updatedAt: Date.now(), url: result.url };
+    // Store metadata pointing to the new unique URL
+    const meta = { updatedAt: timestamp, url: result.url };
     await put("menu/meta.json", JSON.stringify(meta), {
       access: "public",
       addRandomSuffix: false,
