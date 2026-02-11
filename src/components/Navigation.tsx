@@ -22,14 +22,17 @@ const Navigation = () => {
           ? "bg-pub-darker/95 backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
+      aria-label="Hovednavigasjon"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <a href="#" className="flex items-center gap-2 shrink-0">
+          <a href="/" className="flex items-center gap-2 shrink-0" aria-label="Spor 3 Sandnes - Gå til forsiden">
             <img
               src="/spor3.png"
-              alt="Spor 3"
+              alt="Spor 3 Sandnes logo"
               className="h-8 md:h-10 w-auto"
+              width="80"
+              height="40"
             />
           </a>
 
@@ -60,6 +63,7 @@ const Navigation = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="btn-outline !py-2 !px-6 text-sm"
+              aria-label="Book bord hos Spor 3 Sandnes"
             >
               Book bord
             </a>
@@ -69,7 +73,8 @@ const Navigation = () => {
           <button
             className="md:hidden text-pub-warm p-2"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
+            aria-label={menuOpen ? "Lukk meny" : "Åpne meny"}
+            aria-expanded={menuOpen}
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -78,7 +83,7 @@ const Navigation = () => {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-pub-darker/98 backdrop-blur-md border-t border-pub-wood/30">
+        <div className="md:hidden bg-pub-darker/98 backdrop-blur-md border-t border-pub-wood/30" role="menu">
           <div className="px-4 py-6 space-y-4">
             <a
               href={MENU_URL}
@@ -86,6 +91,7 @@ const Navigation = () => {
               rel="noopener noreferrer"
               className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
               onClick={() => setMenuOpen(false)}
+              role="menuitem"
             >
               Meny
             </a>
@@ -93,6 +99,7 @@ const Navigation = () => {
               href="#apningstider"
               className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
               onClick={() => setMenuOpen(false)}
+              role="menuitem"
             >
               Åpningstider
             </a>
@@ -100,6 +107,7 @@ const Navigation = () => {
               href="#kontakt"
               className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
               onClick={() => setMenuOpen(false)}
+              role="menuitem"
             >
               Kontakt
             </a>
@@ -109,6 +117,7 @@ const Navigation = () => {
               rel="noopener noreferrer"
               className="btn-outline !py-2 !px-6 text-sm inline-block"
               onClick={() => setMenuOpen(false)}
+              role="menuitem"
             >
               Book bord
             </a>

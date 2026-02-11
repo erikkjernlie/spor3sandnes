@@ -24,29 +24,35 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden">
+    <section
+      className="relative py-20 md:py-28 overflow-hidden"
+      aria-label="Anmeldelser av Spor 3 Sandnes"
+    >
       {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${sittingGroupImage})` }}
+        role="img"
+        aria-label="Gjester som koser seg i Spor 3 bar Sandnes"
       />
       <div className="absolute inset-0 bg-pub-darker/75 backdrop-blur-[2px]" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-        <h2 className="section-title">Hva gjestene sier</h2>
+        <h2 className="section-title">Hva gjestene sier om Spor 3</h2>
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((t, i) => (
-            <div
+            <article
               key={i}
               className="bg-pub-warm/95 backdrop-blur-sm rounded-lg p-6 md:p-8 shadow-2xl transform hover:-translate-y-1 transition-transform duration-300"
             >
-              <Quote className="w-8 h-8 text-pub-gold/30 mb-4" />
-              <div className="flex items-center gap-1 mb-4">
+              <Quote className="w-8 h-8 text-pub-gold/30 mb-4" aria-hidden="true" />
+              <div className="flex items-center gap-1 mb-4" aria-label={`${t.rating} av 5 stjerner`}>
                 {[...Array(t.rating)].map((_, j) => (
                   <Star
                     key={j}
                     className="w-4 h-4 fill-pub-gold text-pub-gold"
+                    aria-hidden="true"
                   />
                 ))}
               </div>
@@ -56,7 +62,7 @@ const Testimonials = () => {
               <p className="text-pub-dark/70 leading-relaxed text-sm">
                 {t.content}
               </p>
-            </div>
+            </article>
           ))}
         </div>
 
@@ -66,11 +72,14 @@ const Testimonials = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block opacity-80 hover:opacity-100 transition-opacity"
+            aria-label="Se Spor 3 Sandnes på TripAdvisor"
           >
             <img
               src="/tripadvisor-rated.png"
-              alt="TripAdvisor Rated"
+              alt="Spor 3 Sandnes på TripAdvisor - høyt rangert bar og restaurant"
               className="h-10 md:h-12"
+              width="120"
+              height="48"
             />
           </a>
         </div>
