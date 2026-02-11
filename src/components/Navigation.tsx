@@ -1,0 +1,122 @@
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
+
+const MENU_URL =
+  "https://cdn.prod.website-files.com/63a2161950ebce0ce95268f9/6985d7bce3b0bcfd13203048_meny2026%20korrektur2.pdf";
+const BOOKING_URL = "https://spor-3.resos.com/booking";
+
+const Navigation = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-pub-darker/95 backdrop-blur-md shadow-lg"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 md:h-20">
+          <a href="#" className="flex items-center gap-2 shrink-0">
+            <img
+              src="/spor3.png"
+              alt="Spor 3"
+              className="h-8 md:h-10 w-auto"
+            />
+          </a>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8">
+            <a
+              href={MENU_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+            >
+              Meny
+            </a>
+            <a
+              href="#apningstider"
+              className="text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+            >
+              Åpningstider
+            </a>
+            <a
+              href="#kontakt"
+              className="text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+            >
+              Kontakt
+            </a>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline !py-2 !px-6 text-sm"
+            >
+              Book bord
+            </a>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-pub-warm p-2"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-pub-darker/98 backdrop-blur-md border-t border-pub-wood/30">
+          <div className="px-4 py-6 space-y-4">
+            <a
+              href={MENU_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              Meny
+            </a>
+            <a
+              href="#apningstider"
+              className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              Åpningstider
+            </a>
+            <a
+              href="#kontakt"
+              className="block text-pub-warm/80 hover:text-pub-gold transition-colors font-medium"
+              onClick={() => setMenuOpen(false)}
+            >
+              Kontakt
+            </a>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline !py-2 !px-6 text-sm inline-block"
+              onClick={() => setMenuOpen(false)}
+            >
+              Book bord
+            </a>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navigation;
