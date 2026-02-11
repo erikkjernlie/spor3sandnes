@@ -5,24 +5,29 @@ import { list } from "@vercel/blob";
 const FALLBACK_MENU_URL =
   "https://cdn.prod.website-files.com/63a2161950ebce0ce95268f9/6985d7bce3b0bcfd13203048_meny2026%20korrektur2.pdf";
 
+function noCacheHeaders(res: VercelResponse) {
+  res.setHeader("Cache-Control", "private, no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("CDN-Cache-Control", "no-store");
+  res.setHeader("Vercel-CDN-Cache-Control", "no-store");
+}
+
 export default async function handler(_req: VercelRequest, res: VercelResponse) {
+  noCacheHeaders(res);
+
   try {
-    // List blobs with the menu/meta.json prefix to find the metadata
     const { blobs } = await list({ prefix: "menu/meta.json", limit: 1 });
 
     if (blobs.length > 0) {
-      // Fetch the meta.json to get the timestamp
       const metaRes = await fetch(blobs[0].url, { cache: "no-store" });
       if (metaRes.ok) {
         const meta = await metaRes.json();
-        // Redirect to the PDF with a cache-busting version param
         const pdfUrl = `${meta.url}?v=${meta.updatedAt}`;
-        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         return res.redirect(302, pdfUrl);
       }
     }
 
-    // No uploaded menu yet — redirect to fallback
     return res.redirect(302, FALLBACK_MENU_URL);
   } catch (error) {
     console.error("Menu redirect failed:", error);
