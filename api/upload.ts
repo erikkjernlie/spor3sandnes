@@ -12,7 +12,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Expected multipart/form-data" });
     }
 
-    // Use the Web API Request to parse FormData
     const protocol = req.headers["x-forwarded-proto"] || "https";
     const host = req.headers["x-forwarded-host"] || req.headers.host;
     const webRequest = new Request(`${protocol}://${host}${req.url}`, {
@@ -34,18 +33,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Kun PDF-filer er tillatt" });
     }
 
-    // Delete old menu PDFs to avoid accumulating files
+    // Delete all old menu files first
     try {
       const { blobs } = await list({ prefix: "menu/" });
-      const toDelete = blobs.map((b) => b.url);
-      if (toDelete.length > 0) {
-        await del(toDelete);
+      if (blobs.length > 0) {
+        await del(blobs.map((b) => b.url));
       }
     } catch {
       // Ignore cleanup errors
     }
 
-    // Upload the PDF with a unique name (random suffix = unique URL = no caching issues)
+    // Upload with unique timestamp filename — new URL every time, zero cache issues
     const timestamp = Date.now();
     const result = await put(`menu/meny-${timestamp}.pdf`, file, {
       access: "public",
@@ -53,16 +51,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       contentType: "application/pdf",
     });
 
-    // Store metadata pointing to the new unique URL
-    const meta = { updatedAt: timestamp, url: result.url };
-    await put("menu/meta.json", JSON.stringify(meta), {
-      access: "public",
-      addRandomSuffix: false,
-      allowOverwrite: true,
-      contentType: "application/json",
-    });
-
-    return res.status(200).json({ url: result.url, ...meta });
+    return res.status(200).json({ url: result.url, updatedAt: timestamp });
   } catch (error: any) {
     console.error("Upload failed:", error);
     return res.status(500).json({ error: error.message || "Opplasting feilet" });

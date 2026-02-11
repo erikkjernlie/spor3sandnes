@@ -10,8 +10,8 @@ const Admin = () => {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if there's a current menu uploaded
-    fetch("/api/menu", { method: "HEAD", redirect: "manual" })
+    // Fetch the current menu URL by following the redirect manually
+    fetch(`/api/menu?t=${Date.now()}`, { redirect: "manual" })
       .then((res) => {
         const location = res.headers.get("Location");
         if (location) {
@@ -40,7 +40,6 @@ const Admin = () => {
       form.append("file", file);
       const res = await fetch("/api/upload", { method: "POST", body: form });
 
-      // Read the raw text first to avoid JSON parse errors on empty/HTML responses
       const raw = await res.text();
       let data: any;
       try {
@@ -56,7 +55,8 @@ const Admin = () => {
       }
 
       setStatus({ type: "success", message: "Menyen er oppdatert!" });
-      setCurrentMenuUrl(`${data.url}?v=${data.updatedAt}`);
+      // Use the direct blob URL from the upload response — no redirect involved
+      setCurrentMenuUrl(data.url);
       setLastUpdated(new Date(data.updatedAt).toLocaleString("nb-NO"));
       setFile(null);
       if (inputRef.current) inputRef.current.value = "";
@@ -104,7 +104,7 @@ const Admin = () => {
                 </div>
               </div>
               <a
-                href="/api/menu"
+                href={currentMenuUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-pub-gold hover:text-pub-gold-light transition-colors"
