@@ -1,31 +1,38 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { put } from "@vercel/blob";
 
-export const config = { runtime: "edge" };
-
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method Not Allowed" }), {
-      status: 405,
-      headers: { "content-type": "application/json" },
-    });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   try {
-    const formData = await request.formData();
+    // Parse multipart form data from the raw body
+    const contentType = req.headers["content-type"] || "";
+    if (!contentType.includes("multipart/form-data")) {
+      return res.status(400).json({ error: "Expected multipart/form-data" });
+    }
+
+    // Use the Web API Request to parse FormData
+    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const host = req.headers["x-forwarded-host"] || req.headers.host;
+    const webRequest = new Request(`${protocol}://${host}${req.url}`, {
+      method: "POST",
+      headers: req.headers as any,
+      body: req as any,
+      // @ts-ignore - duplex needed for streaming body
+      duplex: "half",
+    });
+
+    const formData = await webRequest.formData();
     const file = formData.get("file");
 
     if (!file || !(file instanceof File)) {
-      return new Response(JSON.stringify({ error: "Ingen fil valgt" }), {
-        status: 400,
-        headers: { "content-type": "application/json" },
-      });
+      return res.status(400).json({ error: "Ingen fil valgt" });
     }
 
     if (file.type !== "application/pdf") {
-      return new Response(
-        JSON.stringify({ error: "Kun PDF-filer er tillatt" }),
-        { status: 400, headers: { "content-type": "application/json" } }
-      );
+      return res.status(400).json({ error: "Kun PDF-filer er tillatt" });
     }
 
     // Upload the PDF
@@ -43,15 +50,9 @@ export default async function handler(request: Request): Promise<Response> {
       contentType: "application/json",
     });
 
-    return new Response(JSON.stringify({ url: result.url, ...meta }), {
-      status: 200,
-      headers: { "content-type": "application/json" },
-    });
-  } catch (error) {
+    return res.status(200).json({ url: result.url, ...meta });
+  } catch (error: any) {
     console.error("Upload failed:", error);
-    return new Response(JSON.stringify({ error: "Opplasting feilet" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
+    return res.status(500).json({ error: error.message || "Opplasting feilet" });
   }
 }
